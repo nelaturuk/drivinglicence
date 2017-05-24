@@ -1,0 +1,22 @@
+var imageGrayScale = require('image-grayscale');
+var globby = require('globby');
+var fs = require('fs');
+
+globby([__dirname + '/test-sud3.jpg']).then(paths =>
+    Promise.all(paths.map(e => imageGrayScale(e, {
+        logProgress: 1,
+        bufferMode: 1
+    }))))
+    .then((buff) => {
+        console.log(buff[0]);
+        fs.writeFile('test-result.jpeg', buff[0], (err) => {
+            if (err) throw err;
+            console.log('The file has been saved!');
+        });
+        // fires when no error (not supported file is error) (Promise.all)
+        console.log('finish');
+    })
+    .catch(err => {
+        // fires once even if one error (Promise.all)
+        if (err) console.log(err);
+    });
